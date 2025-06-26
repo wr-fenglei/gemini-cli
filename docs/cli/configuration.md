@@ -235,6 +235,24 @@ The CLI automatically loads environment variables from an `.env` file. The loadi
   - Your API key for the Gemini API.
   - **Crucial for operation.** The CLI will not function without it.
   - Set this in your shell profile (e.g., `~/.bashrc`, `~/.zshrc`) or an `.env` file.
+- **`DEEPSEEK_API_KEY`**:
+  - Your API key for the DeepSeek API.
+  - Required when using DeepSeek as your AI provider.
+  - Set this in your shell profile (e.g., `~/.bashrc`, `~/.zshrc`) or an `.env` file.
+- **`OPENAI_LIKE_API_KEY`**:
+  - Your API key for any OpenAI-compatible API service.
+  - Required when using OpenAI-like API as your AI provider.
+  - Set this in your shell profile (e.g., `~/.bashrc`, `~/.zshrc`) or an `.env` file.
+- **`OPENAI_LIKE_BASE_URL`**:
+  - The base URL for the OpenAI-compatible API service.
+  - Required when using OpenAI-like API as your AI provider.
+  - Examples: `https://api.deepseek.com/v1`, `https://api.openai.com/v1`,
+  - Set this in your shell profile (e.g., `~/.bashrc`, `~/.zshrc`) or an `.env` file.
+- **`OPENAI_LIKE_MODEL`** (Optional):
+  - The model name to use with the OpenAI-compatible API.
+  - If not specified, defaults to `gpt-3.5-turbo`.
+  - Examples: `deepseek-chat`, `gpt-4`,
+  - Set this in your shell profile (e.g., `~/.bashrc`, `~/.zshrc`) or an `.env` file.
 - **`GEMINI_MODEL`**:
   - Specifies the default Gemini model to use.
   - Overrides the hardcoded default

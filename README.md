@@ -34,11 +34,73 @@ With the Gemini CLI you can:
    ```
 
 3. **Pick a color theme**
-4. **Authenticate:** When prompted, sign in with your personal Google account. This will grant you up to 60 model requests per minute and 1,000 model requests per day using Gemini.
+4. **Authenticate:** When prompted, choose your preferred AI provider:
+   - **Login with Google:** Sign in with your personal Google account for up to 60 model requests per minute and 1,000 model requests per day using Gemini.
+   - **Gemini API Key:** Use a Google AI Studio API key for higher limits.
+   - **DeepSeek API Key:** Use DeepSeek's models with your DeepSeek API key.
+   - **OpenAI-like API:** Use any OpenAI-compatible API (DeepSeek, OpenAI, Volcengine, etc.)
+   - **Vertex AI:** For enterprise Google Cloud users.
 
 You are now ready to use the Gemini CLI!
 
+## Installing from Source (Development/Fork)
+
+If you have forked this repository or want to install a locally modified version:
+
+### Method 1: Using npm pack (Recommended for testing releases)
+
+Best for: Testing the final packaged version before publishing
+
+1. **Clone and build the project:**
+   ```bash
+   git clone https://github.com/your-username/gemini-cli.git  # Or your fork's URL
+   cd gemini-cli
+   npm install
+   npm run build
+   ```
+
+2. **Package and install globally:**
+   ```bash
+   npm pack
+   npm install -g google-gemini-cli-*.tgz
+   ```
+
+3. **Verify installation:**
+   ```bash
+   gemini --version
+   ```
+
+**Updating:** When you make changes, rebuild and repackage:
+```bash
+npm run build
+npm pack
+npm install -g google-gemini-cli-*.tgz
+```
+
+### Method 2: Direct installation from directory (Recommended for development)
+
+Best for: Frequent code changes and rapid iteration
+
+```bash
+# Clone and build the project
+git clone https://github.com/your-username/gemini-cli.git  # Or your fork's URL
+cd gemini-cli
+npm install
+npm run build
+
+# Install directly from directory
+npm install -g .
+```
+
+**Updating:** When you make changes, just rebuild and reinstall:
+```bash
+npm run build
+npm install -g .
+```
+
 ### For advanced use or increased limits:
+
+#### Using Gemini API
 
 If you need to use a specific model or require a higher request capacity, you can use an API key:
 
@@ -47,6 +109,35 @@ If you need to use a specific model or require a higher request capacity, you ca
 
    ```bash
    export GEMINI_API_KEY="YOUR_API_KEY"
+   ```
+
+#### Using DeepSeek API
+
+To use DeepSeek's models (including DeepSeek-V3 and DeepSeek-R1):
+
+1. Generate a key from [DeepSeek Platform](https://platform.deepseek.com/).
+2. Set it as an environment variable in your terminal. Replace `YOUR_DEEPSEEK_API_KEY` with your generated key.
+
+   ```bash
+   export DEEPSEEK_API_KEY="YOUR_DEEPSEEK_API_KEY"
+   ```
+
+3. Optionally specify the model (defaults to `deepseek-chat`):
+
+   ```bash
+   export GEMINI_MODEL="deepseek-reasoner"  # For DeepSeek-R1
+   ```
+
+#### Using OpenAI-like API
+
+To use any OpenAI-compatible API service (DeepSeek, OpenAI, Volcengine, etc.):
+
+Set the required environment variables:
+
+   ```bash
+   export OPENAI_LIKE_API_KEY="YOUR_API_KEY"
+   export OPENAI_LIKE_BASE_URL="YOUR_API_BASE_URL"
+   export OPENAI_LIKE_MODEL="YOUR_MODEL_NAME"  # Optional
    ```
 
 For other authentication methods, including Google Workspace accounts, see the [authentication](./docs/cli/authentication.md) guide.
