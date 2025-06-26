@@ -34,7 +34,57 @@ The Gemini CLI requires you to authenticate with Google's AI services. On initia
         source ~/.bashrc
         ```
 
-3.  **Vertex AI:**
+3.  **<a id="deepseek-api-key"></a>DeepSeek API key:**
+
+    - Obtain your API key from DeepSeek: [https://platform.deepseek.com/](https://platform.deepseek.com/)
+    - Set the `DEEPSEEK_API_KEY` environment variable. In the following methods, replace `YOUR_DEEPSEEK_API_KEY` with the API key you obtained from DeepSeek:
+      - You can temporarily set the environment variable in your current shell session using the following command:
+        ```bash
+        export DEEPSEEK_API_KEY="YOUR_DEEPSEEK_API_KEY"
+        ```
+      - For repeated use, you can add the environment variable to your `.env` file (located in the project directory or user home directory) or your shell's configuration file (like `~/.bashrc`, `~/.zshrc`, or `~/.profile`). For example, the following command adds the environment variable to a `~/.bashrc` file:
+        ```bash
+        echo 'export DEEPSEEK_API_KEY="YOUR_DEEPSEEK_API_KEY"' >> ~/.bashrc
+        source ~/.bashrc
+        ```
+    - **Note:** DeepSeek uses an OpenAI-compatible API. The default model is `deepseek-chat` (DeepSeek-V3-0324), but you can also use `deepseek-reasoner` (DeepSeek-R1-0528) by specifying it in your model configuration.
+
+4.  **<a id="openai-like-api"></a>OpenAI-like API:**
+
+    - For any API that follows OpenAI's chat completions format (like DeepSeek, OpenAI, Anthropic Claude via proxies, etc.)
+    - Set the following environment variables:
+      - `OPENAI_LIKE_API_KEY`: Your API key for the service
+      - `OPENAI_LIKE_BASE_URL`: The base URL for the API (e.g., `https://api.deepseek.com/v1`, `https://api.openai.com/v1`)
+      - `OPENAI_LIKE_MODEL` (optional): The model name to use
+    - Example configuration for DeepSeek:
+      ```bash
+      export OPENAI_LIKE_API_KEY="YOUR_DEEPSEEK_API_KEY"
+      export OPENAI_LIKE_BASE_URL="https://api.deepseek.com/v1"
+      export OPENAI_LIKE_MODEL="deepseek-chat"
+      ```
+      
+5.  **<a id="workspace-gca"></a>Login with Google (Gemini Code Assist for Workspace or licensed Code Assist users):**
+
+    (For more information, see: https://developers.google.com/gemini-code-assist/resources/faqs#gcp-project-requirement)
+
+    - Use this option if:
+
+      1. You have a Google Workspace account. Google Workspace is a paid service for businesses and organizations that provides a suite of productivity tools, including a custom email domain (e.g. your-name@your-company.com), enhanced security features, and administrative controls. These accounts are often managed by an employer or school.
+      2. You are a licensed Code Assist user. This can happen if you have previously purchased a Code Assist license or have acquired one through Google Developer Program.
+
+    - If you fall into one of these categories, you must first configure a Google Cloud Project Id to use, [enable the Gemini for Cloud API](https://cloud.google.com/gemini/docs/discover/set-up-gemini#enable-api) and [configure access permissions](https://cloud.google.com/gemini/docs/discover/set-up-gemini#grant-iam). You can temporarily set the environment variable in your current shell session using the following command:
+      ```bash
+      export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"
+      ```
+      - For repeated use, you can add the environment variable to your `.env` file (located in the project directory or user home directory) or your shell's configuration file (like `~/.bashrc`, `~/.zshrc`, or `~/.profile`). For example, the following command adds the environment variable to a `~/.bashrc` file:
+      ```bash
+      echo 'export GOOGLE_CLOUD_PROJECT="YOUR_PROJECT_ID"' >> ~/.bashrc
+      source ~/.bashrc
+      ```
+    - During startup, Gemini CLI will direct you to a webpage for authentication. Once authenticated, your credentials will be cached locally so the web login can be skipped on subsequent runs.
+    - Note that the web login must be done in a browser that can communicate with the machine Gemini CLI is being run from. (Specifically, the browser will be redirected to a localhost url that Gemini CLI will be listening on).
+
+6.  **Vertex AI:**
     - If not using express mode:
       - Ensure you have a Google Cloud project and have enabled the Vertex AI API.
       - Set up Application Default Credentials (ADC), using the following command:

@@ -111,6 +111,24 @@ export async function main() {
     );
   }
 
+  // set default fallback to deepseek api key
+  if (!settings.merged.selectedAuthType && process.env.DEEPSEEK_API_KEY) {
+    settings.setValue(
+      SettingScope.User,
+      'selectedAuthType',
+      AuthType.USE_DEEPSEEK,
+    );
+  }
+
+  // set default fallback to openai-like api key
+  if (!settings.merged.selectedAuthType && process.env.OPENAI_LIKE_API_KEY && process.env.OPENAI_LIKE_BASE_URL) {
+    settings.setValue(
+      SettingScope.User,
+      'selectedAuthType',
+      AuthType.USE_OPENAI_LIKE,
+    );
+  }
+
   setMaxSizedBoxDebugging(config.getDebugMode());
 
   // Initialize centralized FileDiscoveryService
@@ -275,16 +293,19 @@ async function validateNonInterActiveAuth(
   nonInteractiveConfig: Config,
 ) {
   // making a special case for the cli. many headless environments might not have a settings.json set
-  // so if GEMINI_API_KEY is set, we'll use that. However since the oauth things are interactive anyway, we'll
+  // so if GEMINI_API_KEY, DEEPSEEK_API_KEY, or OPENAI_LIKE_API_KEY is set, we'll use that. However since the oauth things are interactive anyway, we'll
   // still expect that exists
-  if (!selectedAuthType && !process.env.GEMINI_API_KEY) {
+  const hasOpenAILike = process.env.OPENAI_LIKE_API_KEY && process.env.OPENAI_LIKE_BASE_URL;
+  if (!selectedAuthType && !process.env.GEMINI_API_KEY && !process.env.DEEPSEEK_API_KEY && !hasOpenAILike) {
     console.error(
-      'Please set an Auth method in your .gemini/settings.json OR specify GEMINI_API_KEY env variable file before running',
+      'Please set an Auth method in your .gemini/settings.json OR specify GEMINI_API_KEY, DEEPSEEK_API_KEY, or OPENAI_LIKE_API_KEY (with OPENAI_LIKE_BASE_URL) env variable file before running',
     );
     process.exit(1);
   }
 
-  selectedAuthType = selectedAuthType || AuthType.USE_GEMINI;
+  selectedAuthType = selectedAuthType || 
+    (hasOpenAILike ? AuthType.USE_OPENAI_LIKE :
+     (process.env.DEEPSEEK_API_KEY ? AuthType.USE_DEEPSEEK : AuthType.USE_GEMINI));
   const err = validateAuthMethod(selectedAuthType);
   if (err != null) {
     console.error(err);
