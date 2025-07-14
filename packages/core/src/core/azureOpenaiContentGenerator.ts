@@ -19,6 +19,14 @@ import {
 } from '@google/genai';
 import { ContentGenerator } from './contentGenerator.js';
 import { DEFAULT_OPENAI_LIKE_MODEL } from '../config/models.js';
+import {
+  OpenAILikeMessage,
+  OpenAILikeTool,
+  OpenAILikeRequest,
+  OpenAILikeResponse,
+  OpenAILikeStreamChunk,
+  OpenAILikeConfig
+} from './openaiLikeContentGenerator.js'
 
 /**
  * Helper function to convert ContentListUnion to Content[]
@@ -55,103 +63,11 @@ function toContent(content: Content | PartUnion): Content {
   };
 }
 
-export interface OpenAILikeMessage {
-  role: 'system' | 'user' | 'assistant' | 'tool';
-  content: string | null;
-  tool_calls?: Array<{
-    id: string;
-    type: 'function';
-    function: {
-      name: string;
-      arguments: string;
-    };
-  }>;
-  tool_call_id?: string;
-}
-
-export interface OpenAILikeTool {
-  type: 'function';
-  function: {
-    name: string;
-    description: string;
-    parameters: Record<string, unknown>;
-  };
-}
-
-export interface OpenAILikeRequest {
-  model: string;
-  messages: OpenAILikeMessage[];
-  stream?: boolean;
-  temperature?: number;
-  max_tokens?: number;
-  top_p?: number;
-  tools?: OpenAILikeTool[];
-  tool_choice?: 'auto' | 'none' | { type: 'function'; function: { name: string } };
-}
-
-export interface OpenAILikeResponse {
-  id: string;
-  object: string;
-  created: number;
-  model: string;
-  choices: Array<{
-    index: number;
-    message: {
-      role: string;
-      content: string | null;
-      tool_calls?: Array<{
-        id: string;
-        type: 'function';
-        function: {
-          name: string;
-          arguments: string;
-        };
-      }>;
-    };
-    finish_reason: string;
-  }>;
-  usage: {
-    prompt_tokens: number;
-    completion_tokens: number;
-    total_tokens: number;
-  };
-}
-
-export interface OpenAILikeStreamChunk {
-  id: string;
-  object: string;
-  created: number;
-  model: string;
-  choices: Array<{
-    index: number;
-    delta: {
-      role?: string;
-      content?: string;
-      tool_calls?: Array<{
-        index?: number;
-        id?: string;
-        type?: 'function';
-        function?: {
-          name?: string;
-          arguments?: string;
-        };
-      }>;
-    };
-    finish_reason: string | null;
-  }>;
-}
-
-export interface OpenAILikeConfig {
-  baseUrl: string;
-  apiKey: string;
-  modelName: string;
-}
-
 /**
  * OpenAI-like Content Generator that implements OpenAI-compatible API
  * Supports any API that follows OpenAI's chat completions format including function calls
  */
-export class OpenAILikeContentGenerator implements ContentGenerator {
+export class AzureOpenAIContentGenerator implements ContentGenerator {
   private apiKey: string;
   private baseUrl: string;
   private defaultModel: string;
@@ -347,7 +263,7 @@ export class OpenAILikeContentGenerator implements ContentGenerator {
       })
     };
 
-    const response = await fetch(`${this.baseUrl}/chat/completions`, {
+    const response = await fetch(`${this.baseUrl}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -395,7 +311,7 @@ export class OpenAILikeContentGenerator implements ContentGenerator {
       })
     };
 
-    const response = await fetch(`${this.baseUrl}/chat/completions`, {
+    const response = await fetch(`${this.baseUrl}`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

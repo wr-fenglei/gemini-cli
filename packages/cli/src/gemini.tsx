@@ -129,6 +129,15 @@ export async function main() {
     );
   }
 
+  // set default fallback to azure openai api key
+  if (!settings.merged.selectedAuthType && process.env.AZURE_OPENAI_API_KEY && process.env.AZURE_OPENAI_BASE_URL) {
+    settings.setValue(
+      SettingScope.User,
+      'selectedAuthType',
+      AuthType.USE_AZURE_OPENAI,
+    );
+  }
+
   setMaxSizedBoxDebugging(config.getDebugMode());
 
   // Initialize centralized FileDiscoveryService
@@ -296,6 +305,7 @@ async function validateNonInterActiveAuth(
   // so if GEMINI_API_KEY, DEEPSEEK_API_KEY, or OPENAI_LIKE_API_KEY is set, we'll use that. However since the oauth things are interactive anyway, we'll
   // still expect that exists
   const hasOpenAILike = process.env.OPENAI_LIKE_API_KEY && process.env.OPENAI_LIKE_BASE_URL;
+  const hasAzureOpenAI = process.env.AZURE_OPENAI_API_KEY && process.env.AZURE_OPENAI_BASE_URL;
   if (!selectedAuthType && !process.env.GEMINI_API_KEY && !process.env.DEEPSEEK_API_KEY && !hasOpenAILike) {
     console.error(
       'Please set an Auth method in your .gemini/settings.json OR specify GEMINI_API_KEY, DEEPSEEK_API_KEY, or OPENAI_LIKE_API_KEY (with OPENAI_LIKE_BASE_URL) env variable file before running',
@@ -303,9 +313,7 @@ async function validateNonInterActiveAuth(
     process.exit(1);
   }
 
-  selectedAuthType = selectedAuthType || 
-    (hasOpenAILike ? AuthType.USE_OPENAI_LIKE :
-     (process.env.DEEPSEEK_API_KEY ? AuthType.USE_DEEPSEEK : AuthType.USE_GEMINI));
+  selectedAuthType = selectedAuthType || (hasAzureOpenAI ? AuthType.USE_AZURE_OPENAI : (hasOpenAILike ? AuthType.USE_OPENAI_LIKE : (process.env.DEEPSEEK_API_KEY ? AuthType.USE_DEEPSEEK : AuthType.USE_GEMINI)));
   const err = validateAuthMethod(selectedAuthType);
   if (err != null) {
     console.error(err);

@@ -18,6 +18,7 @@ import { DEFAULT_GEMINI_MODEL, DEFAULT_DEEPSEEK_MODEL, DEFAULT_OPENAI_LIKE_MODEL
 import { getEffectiveModel } from './modelCheck.js';
 import { DeepSeekContentGenerator } from './deepseekContentGenerator.js';
 import { OpenAILikeContentGenerator, OpenAILikeConfig } from './openaiLikeContentGenerator.js';
+import { AzureOpenAIContentGenerator } from './azureOpenaiContentGenerator.js';
 
 /**
  * Interface abstracting the core functionalities for generating content and counting tokens.
@@ -42,6 +43,7 @@ export enum AuthType {
   USE_VERTEX_AI = 'vertex-ai',
   USE_DEEPSEEK = 'deepseek-api-key',
   USE_OPENAI_LIKE = 'openai-like-api',
+  USE_AZURE_OPENAI = 'azure-openai',
 }
 
 export type ContentGeneratorConfig = {
@@ -112,6 +114,17 @@ export async function createContentGeneratorConfig(
     return contentGeneratorConfig;
   }
 
+  if (authType === AuthType.USE_AZURE_OPENAI && process.env.AZURE_OPENAI_API_KEY && process.env.AZURE_OPENAI_BASE_URL) {
+    contentGeneratorConfig.openaiLikeConfig = {
+      apiKey: process.env.AZURE_OPENAI_API_KEY,
+      baseUrl: process.env.AZURE_OPENAI_BASE_URL,
+      modelName: openaiLikeModel || DEFAULT_OPENAI_LIKE_MODEL
+    };
+    contentGeneratorConfig.model = effectiveModel || DEFAULT_OPENAI_LIKE_MODEL;
+
+    return contentGeneratorConfig;
+  }
+
   if (
     authType === AuthType.USE_VERTEX_AI &&
     !!googleApiKey &&
@@ -169,6 +182,13 @@ export async function createContentGenerator(
       throw new Error('OpenAI-like API configuration is required');
     }
     return new OpenAILikeContentGenerator(config.openaiLikeConfig);
+  }
+
+  if (config.authType === AuthType.USE_AZURE_OPENAI) {
+    if (!config.openaiLikeConfig) {
+      throw new Error('Azure OpenAI configuration is required');
+    }
+    return new AzureOpenAIContentGenerator(config.openaiLikeConfig);
   }
 
   throw new Error(

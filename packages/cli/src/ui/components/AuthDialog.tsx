@@ -36,6 +36,7 @@ export function AuthDialog({
     { label: 'Gemini API Key', value: AuthType.USE_GEMINI },
     { label: 'DeepSeek API Key', value: AuthType.USE_DEEPSEEK },
     { label: 'OpenAI-like API', value: AuthType.USE_OPENAI_LIKE },
+    { label: 'Azure OpenAI', value: AuthType.USE_AZURE_OPENAI },
     { label: 'Vertex AI', value: AuthType.USE_VERTEX_AI },
   ];
 

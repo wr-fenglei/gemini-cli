@@ -37,6 +37,16 @@ export const validateAuthMethod = (authMethod: string): string | null => {
     return null;
   }
 
+  if (authMethod === AuthType.USE_AZURE_OPENAI) {
+    if (!process.env.AZURE_OPENAI_API_KEY) {
+      return 'AZURE_OPENAI_API_KEY environment variable not found. Add that to your .env and try again, no reload needed!';
+    }
+    if (!process.env.AZURE_OPENAI_BASE_URL) {
+      return 'AZURE_OPENAI_BASE_URL environment variable not found. Add that to your .env and try again, no reload needed!';
+    }
+    return null;
+  }
+
   if (authMethod === AuthType.USE_VERTEX_AI) {
     const hasVertexProjectLocationConfig =
       !!process.env.GOOGLE_CLOUD_PROJECT && !!process.env.GOOGLE_CLOUD_LOCATION;
