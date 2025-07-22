@@ -135,9 +135,9 @@ export class ReadManyFilesTool extends BaseTool<
           type: Type.ARRAY,
           items: {
             type: Type.STRING,
-            minLength: '1',
+            // minLength: '1',
           },
-          minItems: '1',
+          // minItems: '1',
           description:
             "Required. An array of glob patterns or paths relative to the tool's target directory. Examples: ['src/**/*.ts'], ['README.md', 'docs/']",
         },
@@ -145,7 +145,7 @@ export class ReadManyFilesTool extends BaseTool<
           type: Type.ARRAY,
           items: {
             type: Type.STRING,
-            minLength: '1',
+            // minLength: '1',
           },
           description:
             'Optional. Additional glob patterns to include. These are merged with `paths`. Example: ["*.test.ts"] to specifically add test files if they were broadly excluded.',
@@ -155,7 +155,7 @@ export class ReadManyFilesTool extends BaseTool<
           type: Type.ARRAY,
           items: {
             type: Type.STRING,
-            minLength: '1',
+            // minLength: '1',
           },
           description:
             'Optional. Glob patterns for files/directories to exclude. Added to default excludes if useDefaultExcludes is true. Example: ["**/*.log", "temp/"]',

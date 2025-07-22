@@ -13,6 +13,7 @@ import {
   EmbedContentParameters,
   GoogleGenAI,
 } from '@google/genai';
+import { AzureOpenAIContentGenerator } from './azureOpenAIContentGenerator.js';
 import { createCodeAssistContentGenerator } from '../code_assist/codeAssist.js';
 import { DEFAULT_GEMINI_MODEL } from '../config/models.js';
 import { Config } from '../config/config.js';
@@ -43,6 +44,7 @@ export enum AuthType {
   USE_GEMINI = 'gemini-api-key',
   USE_VERTEX_AI = 'vertex-ai',
   CLOUD_SHELL = 'cloud-shell',
+  AZURE_OPENAI = 'azure-openai',
 }
 
 export type ContentGeneratorConfig = {
@@ -50,6 +52,8 @@ export type ContentGeneratorConfig = {
   apiKey?: string;
   vertexai?: boolean;
   authType?: AuthType | undefined;
+
+  endpoint?: string;
 };
 
 export function createContentGeneratorConfig(
@@ -102,6 +106,16 @@ export function createContentGeneratorConfig(
     return contentGeneratorConfig;
   }
 
+  if (authType === AuthType.AZURE_OPENAI) {
+    const azureOpenAIApiKey = process.env.AZURE_OPENAI_API_KEY || undefined;
+    const azureOpenAIEndpoint = process.env.AZURE_OPENAI_ENDPOINT || undefined;
+    const azureOpenAIModel = process.env.AZURE_OPENAI_MODEL || effectiveModel;
+
+    contentGeneratorConfig.apiKey = azureOpenAIApiKey;
+    contentGeneratorConfig.endpoint = azureOpenAIEndpoint;
+    contentGeneratorConfig.model = azureOpenAIModel;
+  }
+
   return contentGeneratorConfig;
 }
 
@@ -139,6 +153,10 @@ export async function createContentGenerator(
     });
 
     return googleGenAI.models;
+  }
+
+  if (config.authType === AuthType.AZURE_OPENAI) {
+    return new AzureOpenAIContentGenerator(config);
   }
 
   throw new Error(

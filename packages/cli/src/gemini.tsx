@@ -161,7 +161,7 @@ export async function main() {
         try {
           const err = validateAuthMethod(settings.merged.selectedAuthType);
           if (err) {
-            throw new Error(err);
+            throw new Error(err.message);
           }
           await config.refreshAuth(settings.merged.selectedAuthType);
         } catch (err) {
@@ -190,7 +190,9 @@ export async function main() {
   }
 
   let input = config.getQuestion();
+
   const startupWarnings = [
+    JSON.stringify(settings),
     ...(await getStartupWarnings()),
     ...(await getUserStartupWarnings(workspaceRoot)),
   ];
@@ -335,7 +337,7 @@ async function validateNonInterActiveAuth(
   selectedAuthType = selectedAuthType || AuthType.USE_GEMINI;
   const err = validateAuthMethod(selectedAuthType);
   if (err != null) {
-    console.error(err);
+    console.error(err.message);
     process.exit(1);
   }
 

@@ -20,6 +20,7 @@
     "dist"
   ],
   "dependencies": {
+    "@azure/openai": "^2.0.0",
     "@google/genai": "1.9.0",
     "@modelcontextprotocol/sdk": "^1.11.0",
     "@opentelemetry/api": "^1.9.0",
@@ -40,6 +41,7 @@
     "ignore": "^7.0.0",
     "micromatch": "^4.0.8",
     "open": "^10.1.2",
+    "openai": "^5.10.1",
     "shell-quote": "^1.8.3",
     "simple-git": "^3.28.0",
     "strip-ansi": "^7.1.0",

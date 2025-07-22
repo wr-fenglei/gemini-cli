@@ -39,9 +39,11 @@ describe('validateAuthMethod', () => {
     });
 
     it('should return an error message if GEMINI_API_KEY is not set', () => {
-      expect(validateAuthMethod(AuthType.USE_GEMINI)).toBe(
-        'GEMINI_API_KEY environment variable not found. Add that to your environment and try again (no reload needed if using .env)!',
-      );
+      expect(validateAuthMethod(AuthType.USE_GEMINI)).toEqual({
+        message:
+          'GEMINI_API_KEY environment variable not found. Add that to your environment and try again (no reload needed if using .env)!',
+        missing: ['GEMINI_API_KEY'],
+      });
     });
   });
 
@@ -58,18 +60,25 @@ describe('validateAuthMethod', () => {
     });
 
     it('should return an error message if no required environment variables are set', () => {
-      expect(validateAuthMethod(AuthType.USE_VERTEX_AI)).toBe(
-        'When using Vertex AI, you must specify either:\n' +
+      expect(validateAuthMethod(AuthType.USE_VERTEX_AI)).toEqual({
+        message:
+          'When using Vertex AI, you must specify either:\n' +
           '• GOOGLE_CLOUD_PROJECT and GOOGLE_CLOUD_LOCATION environment variables.\n' +
           '• GOOGLE_API_KEY environment variable (if using express mode).\n' +
           'Update your environment and try again (no reload needed if using .env)!',
-      );
+        missing: [
+          'GOOGLE_CLOUD_PROJECT',
+          'GOOGLE_CLOUD_LOCATION',
+          'GOOGLE_API_KEY',
+        ],
+      });
     });
   });
 
   it('should return an error message for an invalid auth method', () => {
-    expect(validateAuthMethod('invalid-method')).toBe(
-      'Invalid auth method selected.',
-    );
+    expect(validateAuthMethod('invalid-method')).toEqual({
+      message: 'Invalid auth method selected.',
+      missing: [],
+    });
   });
 });

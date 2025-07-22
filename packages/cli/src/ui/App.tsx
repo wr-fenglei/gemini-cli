@@ -186,7 +186,7 @@ const App = ({ config, settings, startupWarnings = [], version }: AppProps) => {
     if (settings.merged.selectedAuthType) {
       const error = validateAuthMethod(settings.merged.selectedAuthType);
       if (error) {
-        setAuthError(error);
+        setAuthError(error.message);
         openAuthDialog();
       }
     }
